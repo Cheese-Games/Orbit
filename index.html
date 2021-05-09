@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>a game</title>
+  <meta content="a game" property="og:title">
+  <meta content="a game by xtracube" property="og:description">
+  <meta content="https://a-game.xtracube.repl.co" property="og:url">
+  <meta content="/static/preview.png" property="og:image">
+  <meta content="#ac2948" data-react-helmet="true" name="theme-color">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+
+<body>
+  <div id="inactivityModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <p id="modalText">You have been kicked for inactivity</p>
+  </div>
+
+</div>
+  <div id = "Main">
+    <h1 id = "Title"> a game </h1>
+    <div id = "ControlPanel">
+      <label for="NameInput">Username</label>
+      <input id = "NameInput" placeholder="Username" type = "text">
+      <input id = "ConnectButton" class = "btn" type = "submit" value = "Join" onclick = "Join()">
+      <input id = "ColorButton" class = "btn" type = "submit" value = "Change Color" onclick = "NewColor()"><br>
+      <p id="error"></p>
+    </div>
+    <div id = "GameArea">
+      <canvas id="canvas"></canvas>
+    </div>
+    <button id="openChatBtn" class="openbtn" onclick="ToggleChat()">&#9776; Open Chat</button>
+    <br><br>
+  </div>
+
+  <div class="version">
+    <h3>V0.1.0</h3>
+  </div>
+  <div class="discord">
+    <a href="https://discord.gg/u77VFsWUWv">
+    <img width="40%" height="40%" src="/static/discord.png"></a>
+  </div>
+  <div id="chatBar" class="sidebar">
+    <div id = "Chat">
+      <p id = "Message0" class = "Message"></p>
+    </div>
+    <div class="ChatControls">
+      <input id="ComposedMessage" type="text2" placeholder="Type your message here">
+      <input id="SendMessage" onclick="Send()" value="Send" class="Button" type="submit">
+    </div>
+  </div>
+  <script src="/static/script.js"></script>
+
+</body>
+
+</html>
