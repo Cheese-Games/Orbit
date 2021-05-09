@@ -1,0 +1,7 @@
+{
+  "name": "a game",
+  "description": "a game by xtracube",
+  "repository": "https://github.com/XtraCube/a-game",
+  "logo": "https://a-game-by-xtracube.herokuapp.com/static/logo.png",
+  "keywords": ["node", "express", "static", "game", "xtracube"]
+}
