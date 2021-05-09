@@ -13,7 +13,7 @@ const io = socketIO(server, {
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const velMod = 1;
 const velDownRate = 0.87;
