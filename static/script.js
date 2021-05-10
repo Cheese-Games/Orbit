@@ -17,7 +17,17 @@ var movement = {
   right: false
 };
 
-$("#ColorButton").hide();
+$("#ColorPicker").spectrum({
+  color: false,
+  preferredFormat: "hex",
+  showInitial: true,
+  showInput: true,
+  containerClassName: "colorPicker",
+  replacerClassName: "colorPicker",
+  change: (color)=>{
+    ChangeColor(color.toHexString());
+  }
+});
 $("#openChatBtn").hide();
 
 function Join() {
@@ -101,8 +111,7 @@ ${Math.floor(p.vx)}, ${Math.floor(p.vy)}`, 10, 582)
     kick = true;
     openModal(message);
     if (!closeStuff) return;
-    canvas.style.display = "none";
-    $("#ColorButton").hide();
+    $("#canvas").hide();
     $("#openChatBtn").hide();
   });
 
@@ -110,13 +119,11 @@ ${Math.floor(p.vx)}, ${Math.floor(p.vy)}`, 10, 582)
     if (!kick)
       openModal("Connection was interrupted. Try reloading the page");
     $("#canvas").hide();
-    $("#ColorButton").hide();
     $("#openChatBtn").hide();
   });
 
   socket.on("connect_error", function() {
     $("#canvas").hide();
-    $("#ColorButton").hide();
     $("#openChatBtn").hide();
     $("#status").html("Could not connect to server");
   });
@@ -126,8 +133,8 @@ ${Math.floor(p.vx)}, ${Math.floor(p.vy)}`, 10, 582)
     kick = false;
     socket.emit("join", $("#NameInput").val());
     $("#canvas").show();
-    $("#ColorButton").show();
     $("#openChatBtn").show();
+    openNav();
   });
 
   socket.on("message", function(message) {
@@ -147,7 +154,7 @@ document.addEventListener("keydown", function(event) {
   if (event.keyCode === 13) {
     if ($("#ComposedMessage").is(':focus')) {
       Send();
-    } else if ($("#NameInput").is(':focus')) {
+    } else if ($("#NameInput").is(':focus') || $("#ServerInput").is(':focus')) {
       $("#NameInput").blur();
       Join();
     }
@@ -242,13 +249,13 @@ function Send() {
   messageInput.value = "";
 }
 
-function NewColor() {
+function ChangeColor(color) {
   if (socket === undefined) return;
-  socket.emit("color");
+  socket.emit("color", color);
 }
 
 function canMove() {
-  return !($("#ComposedMessage").is(':focus') || $("#NameInput").is(':focus'));
+  return !($("#ComposedMessage").is(':focus') || $("#NameInput").is(':focus') || $("#ServerInput").is(':focus'));
 }
 
 function openModal(text) {
@@ -280,27 +287,6 @@ function sin_to_hex(i, phase) {
   var hex = int.toString(16);
 
   return hex.length === 1 ? "0" + hex : hex;
-}
-
-function SetPromise(timeout, callback) {
-  return new Promise((resolve, reject) => {
-    // Set up the timeout
-    const timer = setTimeout(() => {
-      reject(new Error(`Promise timed out after ${timeout} ms`));
-    }, timeout);
-
-    // Set up the real work
-    callback(
-      (value) => {
-        clearTimeout(timer);
-        resolve(value);
-      },
-      (error) => {
-        clearTimeout(timer);
-        reject(error);
-      }
-    );
-  });
 }
 
 const pSBC = (r, t, e, l) => {

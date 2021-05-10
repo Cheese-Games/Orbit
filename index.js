@@ -133,16 +133,17 @@ io.on("connection", function (socket) {
                 },
             },
         };
-        collider = {
-            type: "circle",
-            x: x,
-            y: y,
-            r: 26,
-        };
-        colliders[socket.id] = collider;
-    });
 
-    socket.on("movement", function (data) {
+		collider = {
+			type: "circle",
+			x: x,
+			y: y,
+			r: 26
+		};
+		colliders[socket.id] = collider;
+    })
+
+    socket.on("movement", function(data) {
         var player = players[socket.id];
         if (!data || !player) return;
         player.timeSinceLastState = 0;
@@ -176,8 +177,9 @@ io.on("connection", function (socket) {
         } catch {}
     });
 
-    socket.on("color", function () {
-        var color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    socket.on("color", function(color) {
+        if (color === undefined) return;
+      
         var shadowColor = pSBC(-0.4, color);
         try {
             var player = players[socket.id];
@@ -218,36 +220,36 @@ setInterval(function () {
         } else if (player.y < 30) {
             player.y = 30;
         }
-        playerCollider.x = player.x;
-        playerCollider.y = player.y;
 
-        for (var collid in colliders) {
-            if (collid === socketId) continue;
-            var collider = colliders[collid];
-            switch (collider.type) {
-                case "circle":
-                    if (CirclesColliding(playerCollider, collider)) {
-                        var vCollision = {
-                            x: collider.x - playerCollider.x,
-                            y: collider.y - playerCollider.y,
-                        };
-                        var distance = Math.sqrt(
-                            (collider.x - playerCollider.x) * (collider.x - playerCollider.x) +
-                                (collider.y - playerCollider.y) * (collider.y - playerCollider.y)
-                        );
-                        var vCollisionNorm = {
-                            x: vCollision.x / distance,
-                            y: vCollision.y / distance,
-                        };
-                        var impulse = 2 / 40;
-                        players[collid].vx += impulse * 10 * vCollisionNorm.x;
-                        players[collid].vy += impulse * 10 * vCollisionNorm.y;
-                        player.vx -= impulse * 30 * vCollisionNorm.x;
-                        player.vy -= impulse * 30 * vCollisionNorm.y;
-                    }
-                    break;
-            }
-        }
+		playerCollider.x = player.x;
+		playerCollider.y = player.y;
+
+		for (var collid in colliders) {
+			if (collid === socketId) continue;
+			var collider = colliders[collid];
+			switch (collider.type) {
+				case "circle":
+					if (CirclesColliding(playerCollider, collider)) {
+						var vCollision = {
+							x: collider.x - playerCollider.x,
+							y: collider.y - playerCollider.y
+						};
+						var distance = Math.sqrt(
+							(collider.x-playerCollider.x)*(collider.x-playerCollider.x) +
+							(collider.y-playerCollider.y)*(collider.y-playerCollider.y));
+						var vCollisionNorm = {
+							x: vCollision.x / distance,
+							y: vCollision.y / distance
+						};
+						var impulse = 2 / 40;
+						players[collid].vx += impulse * 10 * vCollisionNorm.x;
+						players[collid].vy += impulse * 10 * vCollisionNorm.y;
+						player.vx -= impulse * 30 * vCollisionNorm.x;
+						player.vy -= impulse * 30 * vCollisionNorm.y;
+					}
+					break;
+			}
+		}
     }
     io.sockets.emit("state", players);
 }, 15);
