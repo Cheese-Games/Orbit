@@ -108,8 +108,9 @@ io.on("connection", function (socket) {
         var color = "#" + Math.floor(Math.random() * 16777215).toString(16);
         var shadowColor = pSBC(-0.4, color);
 
-        x = Math.floor(Math.random() * 1000) + 50;
-        y = Math.floor(Math.random() * 500) + 50;
+        x = randomInt(50, 1000);
+        y = randomInt(50, 500);
+
         players[socket.id] = {
             x: x,
             y: y,
@@ -162,12 +163,13 @@ io.on("connection", function (socket) {
     });
 
     socket.on("send", function (message) {
+        if (message.isEmpty) return;
         try {
-            var msg = profanity.purify(message.toString().sanitize()).slice(0, -1).slice(0, 99);
+            message = message.toString().sanitize().purify().slice(0, 99);
             var player = players[socket.id];
             player.rateLimit.messagesSent++;
 
-            if (player.rateLimit.messagesSent > 5) {
+            if (player.rateLimit.messagesSent > 4) {
                 kickPlayer(socket, "You have been kicked. Reason: Spam");
                 return;
             }
@@ -177,13 +179,13 @@ io.on("connection", function (socket) {
     });
 
     socket.on("color", function (color) {
-        if (color === undefined) return;
+        // Ensure the player is setting an existing color
+        if (color === undefined || !(typeof color == "string") || !((color.startsWith("#") && color.length == 7) || color == "rainbow")) return;
 
-        var shadowColor = pSBC(-0.4, color);
         try {
             var player = players[socket.id];
             player.color = color;
-            player.shadowColor = shadowColor;
+            player.shadowColor = pSBC(-0.4, color);
             player.rateLimit.colorChanges++;
             if (player.rateLimit.colorChanges > 60) {
                 kickPlayer(socket, "You have been kicked. Reason: Color Spam");
