@@ -1,7 +1,7 @@
 {
-  "name": "a game",
-  "description": "a game by xtracube",
-  "repository": "https://github.com/XtraCube/a-game",
+  "name": "Orbit",
+  "description": "a fun circle game",
+  "repository": "https://github.com/XtraCube/Orbit",
   "logo": "https://a-game-by-xtracube.herokuapp.com/static/logo.png",
-  "keywords": ["node", "express", "static", "game", "xtracube"]
+  "keywords": ["node", "express", "static", "game", "xtracube", "orbit"]
 }

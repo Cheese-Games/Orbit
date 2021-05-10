@@ -6,19 +6,20 @@
   <meta content="a game" property="og:title">
   <meta content="a game by xtracube" property="og:description">
   <meta content="https://a-game.xtracube.repl.co" property="og:url">
-  <meta content="/static/logo.png" property="og:image">
+  <meta content="/static/img/logo.png" property="og:image">
   <meta content="#ac2948" data-react-helmet="true" name="theme-color">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css">
-  <link rel='stylesheet' href='/static/spectrum.css' />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css" />
+  <link rel='stylesheet' href='/static/css/spectrum.css' />
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="shortcut icon" type="image/png" href="/static/img/logo.png" />
+  <link rel="icon" type="image/png" href="/static/img/logo.png" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script src='/static/spectrum.js'></script>
-  <link rel="shortcut icon" type="image/png" href="/static/logo.png" />
-  <link rel="icon" type="image/png" href="/static/logo.png" />
-  <link rel="stylesheet" type="text/css" href="/static/style.css">
+  <script src='/static/js/spectrum.js'></script>
 </head>
 
 <body>
@@ -30,7 +31,7 @@
 
   </div>
   <div id="Main">
-    <h1 id="Title"> a game </h1>
+    <img src="/static/img/banner.png" height="100vh" style="margin-top:1em;">
     <h2 id="news"></h2>
     <div id="ControlPanel">
       <label for="NameInput">Username</label>
@@ -53,18 +54,20 @@
   </div>
   <div class="discord">
     <a href="https://discord.gg/u77VFsWUWv">
-      <img width="40%" height="40%" src="/static/discord.png"></a>
+      <img width="40%" height="40%" src="/static/img/discord.png"></a>
   </div>
   <div id="chatBar" class="sidebar">
     <div id="Chat">
       <p id="Message0" class="Message"></p>
     </div>
     <div class="ChatControls">
+      <emoji-picker id="emoji-picker" style="position:absolute;bottom:7vh;display:none;"></emoji-picker>
       <input id="ComposedMessage" type="text2" placeholder="Type your message here">
       <input id="SendMessage" onclick="Send()" value="Send" class="Button" type="submit">
+      <button onclick="onEmojiClick()" style="font-size:3.5vh;position:absolute;bottom:0;left:0vw;top:92.5vh;right:0;background-color:Transparent;background-repeat:no-repeat;border:none;cursor:pointer;overflow: hidden;outline:none;">😃</button>
     </div>
   </div>
-  <script src="/static/script.js"></script>
+  <script src="/static/js/script.js"></script>
 
 </body>
 

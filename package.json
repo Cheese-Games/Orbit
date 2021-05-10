@@ -1,7 +1,7 @@
 {
-  "name": "a-game",
+  "name": "Orbit",
   "version": "1.0.0",
-  "description": "a game by xtracube",
+  "description": "a fun circle game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

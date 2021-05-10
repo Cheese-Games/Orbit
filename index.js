@@ -27,6 +27,7 @@ const velDownRate = 0.87;
 const inactivityTimer = 10;
 
 var sockets = io.sockets.sockets;
+io.set("origins", "https://a-game-by-xtracube.herokuapp.com:*");
 
 app.set("port", port);
 app.use(function(req, res, next) {
@@ -45,7 +46,7 @@ String.prototype.isEmpty = function() {
 };
 
 String.prototype.sanitize = function() {
-  return DOMPurify.sanitize(this, {ALLOWED_TAGS: ['b', 'i']});
+  return DOMPurify.sanitize(this, {ALLOWED_TAGS: ["b", "i"]});
 };
 
 String.prototype.purify = function() {
@@ -64,8 +65,8 @@ function kickPlayer(socket, message) {
   socket.emit("modal", message, true);
   socket.disconnect(true);
   socket = undefined;
-  delete players[p];
-  delete colliders[p];
+  delete players[socketId];
+  delete colliders[socketId];
 }
 
 function randomInt(min = 0, max = 10000) {
@@ -78,14 +79,14 @@ io.on("connection", function(socket) {
 
     if (name.isEmpty() || name.toString().isEmpty()) name = "Player";
 
-    // Loop to ensure name w/ numbers on it doesn't already exist
+    // Loop to ensure name w/ numbers on it doesn"t already exist
     var modified = false;
     nameWhile: while (true) {
       // Check if name already exists
-      for (socketId in players) {
+      for (var socketId in players) {
         if (socketId === socket.id) continue;
         if (players[socketId].name == name) {
-          name = (!modified ? name + " (" + randomInt(10, 99) : name.slice(0, -1) /* Remove ')' */ + randomInt(1, 9)) + ")";
+          name = (!modified ? name + " (" + randomInt(10, 99) : name.slice(0, -1) /* Remove ")" */ + randomInt(1, 9)) + ")";
           modified = true;
           continue nameWhile;
         }
@@ -103,7 +104,7 @@ io.on("connection", function(socket) {
       return;
     }
 
-    // Can't be generic about state change, if they change color 5 times then join this will kick them smh
+    // Can"t be generic about state change, if they change color 5 times then join this will kick them smh
     // if (stateChange > 5) {
     //     kickPlayer(socket, "You have been kicked. Reason: Too many state changes");
     //     return;
@@ -182,9 +183,10 @@ io.on("connection", function(socket) {
     player.timeSinceLastState = 0;
 
     message = message
-		.replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-		.replace(/\*(.*)\*/gim, '<i>$1</i>')
-		.replace(/\n$/gim, '<br />');
+		.replace(/\*\*(.*)\*\*/gim, "<b>$1</b>")
+		.replace(/\*(.*)\*/gim, "<i>$1</i>")
+		.replace(/\n$/gim, "<br />");
+    if (message.isEmpty()) return;
 
     io.sockets.emit("message", `${player.name}: ${message}`);
   });
@@ -206,7 +208,7 @@ io.on("connection", function(socket) {
 
   socket.on("data", function() {
     var data = {};
-    data["playerCount"] = getPlayerCount();
+    data.playerCount = getPlayerCount();
     socket.emit("responseData", data);
   });
 });
@@ -261,11 +263,10 @@ setInterval(function() {
               x: vCollision.x / distance,
               y: vCollision.y / distance,
             };
-            var impulse = 2 / 40;
-            players[collid].vx += impulse * 10 * vCollisionNorm.x;
-            players[collid].vy += impulse * 10 * vCollisionNorm.y;
-            player.vx -= impulse * 30 * vCollisionNorm.x;
-            player.vy -= impulse * 30 * vCollisionNorm.y;
+            players[collid].vx += 1 * vCollisionNorm.x;
+            players[collid].vy += 1 * vCollisionNorm.y;
+            player.vx -= 1 * vCollisionNorm.x;
+            player.vy -= 1 * vCollisionNorm.y;
           }
           break;
       }
@@ -326,8 +327,8 @@ function RectCircleColliding(rect, circle) {
     return true;
   }
 
-  var dx = dx - rect.w;
-  var dy = dy - rect.h;
+  dx = dx - rect.w;
+  dy = dy - rect.h;
   return dx * dx + dy * dy <= circle.r * circle.r;
 }
 
