@@ -21,14 +21,17 @@ $("#ColorButton").hide();
 $("#openChatBtn").hide();
 
 function Join() {
+  if (socket !== undefined) {
+    socket.emit("join", $("#NameInput").val());
+    return;
+  }
   var server = $("#ServerInput").val();
   $("#status").html("Connecting...");
-  if (socket !== undefined) {
-    noModal = true;
-    socket.disconnect();
-  }
   socket = io(server);
   setUpSockets();
+  $("#ServerInput").hide();
+  $('label[for="ServerInput"]').hide();
+  $("#ConnectButton").val("Change Name");
 }
 
 function setUpSockets() {
