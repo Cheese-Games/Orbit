@@ -276,11 +276,7 @@ setInterval(function () {
 }, 1000);
 
 function getPlayerCount() {
-    var pc = 0;
-    for (var p in players) {
-        pc++;
-    }
-    return pc;
+    return players.length;
 }
 
 function CirclesColliding(c1, c2) {
