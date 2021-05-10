@@ -1,5 +1,7 @@
 # Orbit
 
+[![Discord](https://img.shields.io/badge/Discord-chat-blue?style=flat-square)](https://discord.gg/u77VFsWUWv)
+
 i made this game for school and for fun
 
 # Instructions to run your own custom game server
