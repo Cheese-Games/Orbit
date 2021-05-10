@@ -22,6 +22,10 @@ var movement = {
         for (direction in this.directions) if (this.directions[direction]) sum++;
         return sum;
     },
+    reset: function () {
+        for (direction in this.directions) this.directions[direction] = false;
+        this.changed = true;
+    },
     changed: false,
 };
 
@@ -163,7 +167,7 @@ ${Math.floor(p.vx)}, ${Math.floor(p.vy)}`,
 
     // Just incase a packet is dropped at some stage, send our movement every 250ms
     movementPing = setInterval(function () {
-            socket.emit("movement", movement.directions);
+        socket.emit("movement", movement.directions);
     }, 250);
 }
 
@@ -180,11 +184,7 @@ document.addEventListener("keydown", function (event) {
     }
 
     if (!canMove()) {
-        movement.down = false;
-        movement.left = false;
-        movement.right = false;
-        movement.up = false;
-        movement.changed = true;
+        movement.reset();
         return;
     }
     var before = movement.sum();
@@ -214,7 +214,10 @@ document.addEventListener("keydown", function (event) {
 });
 
 document.addEventListener("keyup", function (event) {
-    if (!canMove()) return;
+    if (!canMove()) {
+        movement.reset();
+        return;
+    }
     var before = movement.sum();
     switch (event.keyCode) {
         case 37: // left
@@ -237,7 +240,7 @@ document.addEventListener("keyup", function (event) {
             movement.directions.down = false;
             break;
     }
-    
+
     if (!movement.changed) movement.changed = movement.sum() != before;
 });
 
