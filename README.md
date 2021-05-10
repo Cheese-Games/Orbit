@@ -1,5 +1,4 @@
-# a game
-a game by xtracube
+# Orbit
 
 i made this game for school and for fun
 
@@ -24,8 +23,8 @@ Then follow these steps:
 
 1. Clone the repo
 ```sh
-git clone https://github.com/XtraCube/a-game.git
-cd a-game
+git clone https://github.com/XtraCube/Orbit.git
+cd Orbit
 ```
 2. Install the npm packages
 ```sh
