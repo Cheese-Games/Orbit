@@ -27,7 +27,7 @@ const velDownRate = 0.87;
 const inactivityTimer = 10;
 
 var sockets = io.sockets.sockets;
-io.set("origins", "https://orbit-cg.herokuapp.com/:*");
+io.set("origins", "https://orbit-cg.herokuapp.com:*");
 
 app.set("port", port);
 app.use(function(req, res, next) {
