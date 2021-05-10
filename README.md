@@ -3,7 +3,7 @@ a game by xtracube
 
 i made this game for school and for fun
 
-![Example](https://media.discordapp.net/attachments/816969327504392243/841344054632906762/unknown.png "Example")
+![Example](https://media.discordapp.net/attachments/816969327504392243/841344054632906762/unknown.png?width=300&height=150 "Example")
 
 # Instructions to run your own custom game server
 
