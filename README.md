@@ -2,9 +2,9 @@
 a game by xtracube
 
 i made this game for school and for fun
+![Example](https://raw.githubusercontent.com/Captains-Ship/a-game/master/static/preview.png "Example")
 
 # Instructions to run your own custom game server
-![Example](https://raw.githubusercontent.com/Captains-Ship/a-game/master/static/preview.png "Example")
 
 ## Method 1: Deploy to Heroku
 Just press the button below to deploy the server to heroku
