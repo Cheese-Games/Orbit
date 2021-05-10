@@ -11,9 +11,11 @@
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css">
+  <link rel='stylesheet' href='/static/spectrum.css' />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src='/static/spectrum.js'></script>
   <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
   <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
@@ -35,7 +37,7 @@
       <label for="ServerInput">Server</label>
       <input id="ServerInput" placeholder="Leave blank for default" type="text">
       <input id="ConnectButton" class="btn" type="submit" value="Join" onclick="Join()">
-      <input id="ColorButton" class="btn" type="submit" value="Change Color" onclick="NewColor()"><br>
+      <input id='ColorPicker' /><br>
       <p id="status"></p>
     </div>
     <div id="GameArea">

@@ -115,7 +115,7 @@ io.on("connection", function(socket) {
 			y: y,
 			r: 26
 		};
-		colliders[socket.id] = collider; 
+		colliders[socket.id] = collider;
     })
 
     socket.on("movement", function(data) {
@@ -156,8 +156,8 @@ io.on("connection", function(socket) {
         } catch {}
     });
 
-    socket.on("color", function() {
-        var color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    socket.on("color", function(color) {
+        if (color === undefined) return;
         var shadowColor = pSBC(-0.4, color);
         try {
             var player = players[socket.id];
@@ -208,14 +208,14 @@ setInterval(function() {
 				case "circle":
 					if (CirclesColliding(playerCollider, collider)) {
 						var vCollision = {
-							x: collider.x - playerCollider.x, 
+							x: collider.x - playerCollider.x,
 							y: collider.y - playerCollider.y
 						};
 						var distance = Math.sqrt(
 							(collider.x-playerCollider.x)*(collider.x-playerCollider.x) +
 							(collider.y-playerCollider.y)*(collider.y-playerCollider.y));
 						var vCollisionNorm = {
-							x: vCollision.x / distance, 
+							x: vCollision.x / distance,
 							y: vCollision.y / distance
 						};
 						var impulse = 2 / 40;

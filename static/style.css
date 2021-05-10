@@ -1,3 +1,13 @@
+.colorPicker {
+  background: #2c2f33;
+  color: #fff;
+}
+
+.colorPicker input {
+  background: #2c2f33;
+  color: #fff;
+}
+
 canvas {
   display: none;
   overflow: hidden;
@@ -171,7 +181,7 @@ label {
   overflow-y: scroll;
   height: 92vh;
   outline: none;
-  -ms-overflow-style: none; 
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
@@ -202,7 +212,7 @@ label {
   .sidebar {padding-top: 15px;}
   outline: none;
   .sidebar a {font-size: 18px;}
-} 
+}
 
 .modal {
   display: none; /* Hidden by default */
