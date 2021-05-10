@@ -1,7 +1,7 @@
 # a game
 a game by xtracube
 
-i made this game for school and for fun.
+i made this game for school and for fun
 
 # Instructions to run your own custom game server
 
