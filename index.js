@@ -180,7 +180,7 @@ io.on("connection", function (socket) {
 
     socket.on("color", function (color) {
         // Ensure the player is setting an existing color
-        if (color === undefined || !(typeof color == "string") || !((color.startsWith("#") && color.length == 7) || color == "rainbow")) return;
+        if (color === undefined || !(typeof color == "string") || !((color.startsWith("#") && color.length == 7 && (color.split("#").length - 1) == 1) || color == "rainbow")) return;
 
         try {
             var player = players[socket.id];
