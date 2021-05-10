@@ -5,7 +5,7 @@ i made this game for school and for fun
 
 # Screenshots
 
-![Example](https://media.discordapp.net/attachments/816969327504392243/841344054632906762/unknown.png?width=750&height=250 "Example")
+![Example](https://media.discordapp.net/attachments/816969327504392243/841344054632906762/unknown.png?width=750&height=169 "Example")
 
 # Instructions to run your own custom game server
 
