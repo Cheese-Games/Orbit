@@ -24,8 +24,8 @@ Then follow these steps:
 
 1. Clone the repo
 ```sh
-git clone https://github.com/ottomated/crewlink-server.git
-cd crewlink-server
+git clone https://github.com/XtraCube/a-game.git
+cd a-game
 ```
 2. Install the npm packages
 ```sh
