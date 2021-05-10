@@ -1,7 +1,7 @@
 # a game
 a game by xtracube
 
-i made this game for school and for fun
+i made this game for school and for fun\n
 ![Example](https://raw.githubusercontent.com/Captains-Ship/a-game/master/static/preview.png "Example")
 
 # Instructions to run your own custom game server
