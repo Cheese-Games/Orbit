@@ -91,8 +91,9 @@ io.on("connection", function (socket) {
         }
 
         if ((existingPlayer = players[socket.id]) !== undefined) {
-            if ((existingPlayer.stateChange += 1) > 60) {
-                kickPlayer(socket, "You have been kicked. Reason: Too many state changes");
+            existingPlayer.rateLimit.nameChanges++;
+            if (existingPlayer.rateLimit.nameChanges > 20) {
+                kickPlayer(socket, "You have been kicked. Reason: Name Spam");
                 return;
             }
             existingPlayer.name = name;
