@@ -132,6 +132,14 @@ io.on("connection", function (socket) {
                     this.messagesSent = 0;
                 },
             },
+            movement: {
+                directions: {
+                    up: false,
+                    down: false,
+                    left: false,
+                    right: false,
+                },
+            },
         };
 
         collider = {
@@ -148,13 +156,7 @@ io.on("connection", function (socket) {
         if (!data || !player) return;
         player.timeSinceLastState = 0;
         player.lastMovement = 0;
-        if (data.left) player.vx -= velMod;
-
-        if (data.up) player.vy -= velMod;
-
-        if (data.right) player.vx += velMod;
-
-        if (data.down) player.vy += velMod;
+        player.movement.directions = data;
     });
 
     socket.on("disconnect", function () {
@@ -180,7 +182,12 @@ io.on("connection", function (socket) {
 
     socket.on("color", function (color) {
         // Ensure the player is setting an existing color
-        if (color === undefined || !(typeof color == "string") || !((color.startsWith("#") && color.length == 7 && (color.split("#").length - 1) == 1) || color == "rainbow")) return;
+        if (
+            color === undefined ||
+            !(typeof color == "string") ||
+            !((color.startsWith("#") && color.length == 7 && color.split("#").length - 1 == 1) || color == "rainbow")
+        )
+            return;
 
         try {
             var player = players[socket.id];
@@ -207,6 +214,15 @@ setInterval(function () {
         var player = players[socketId];
         var playerCollider = colliders[socketId];
         if (player === undefined) continue;
+
+        if (player.movement.directions.left) player.vx -= velMod;
+
+        if (player.movement.directions.up) player.vy -= velMod;
+
+        if (player.movement.directions.right) player.vx += velMod;
+
+        if (player.movement.directions.down) player.vy += velMod;
+
         player.vx *= velDownRate;
         player.vy *= velDownRate;
         player.x += player.vx;
