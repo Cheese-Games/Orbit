@@ -164,10 +164,10 @@ io.on("connection", function (socket) {
         delete colliders[socket.id];
     });
 
-    socket.on("send", function (message) {
-        if (message.isEmpty) return;
+    socket.on("send", function (msg) {
+        if (msg.isEmpty()) return;
         try {
-            message = message.toString().sanitize().purify().slice(0, 99);
+            message = msg.toString().sanitize().purify().slice(0, 99);
             var player = players[socket.id];
             player.rateLimit.messagesSent++;
 
@@ -176,7 +176,7 @@ io.on("connection", function (socket) {
                 return;
             }
             player.timeSinceLastState = 0;
-            io.sockets.emit("message", `${player.name}: ${msg}`);
+            io.sockets.emit("message", `${player.name}: ${message}`);
         } catch {}
     });
 

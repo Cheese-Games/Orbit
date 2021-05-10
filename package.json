@@ -1,7 +1,7 @@
 {
-  "name": "Socketio-Chat-Template",
+  "name": "a game",
   "version": "1.0.0",
-  "description": "",
+  "description": "a game by xtracube",
   "main": "index.js",
   "scripts": {
   "start": "node index.js"
