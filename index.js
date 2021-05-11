@@ -21,14 +21,14 @@ const inactivityTimer = 10;
 
 var serverInfo = {
     version: "0.1.0",
-    tickrate: 6, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
+    tickrate: 20, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
 };
 // Can't do this inside ?? Whatever
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
 
 const tickMultiplier = 1000 / 15 /* 15ms was the games original interval */ / serverInfo.tickrate;
 
-const playerSpeed = 3 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
+const playerSpeed = 1 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
 const velDownRate = 0.87; // I'm stupid, intially I scaled the velDownRate but in reality that is wrong
 const interpIterations = Math.ceil(tickMultiplier);
 
