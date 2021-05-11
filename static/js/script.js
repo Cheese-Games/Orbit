@@ -11,6 +11,21 @@ var debug = false;
 var movementInterval;
 var movementPing;
 
+var intervals = [];
+
+var serverInfo = {
+  tickrate: 20,
+  version: "Unknown",
+}
+serverInfo.tickInterval = 1000 / serverInfo.tickrate;
+
+var clientInfo = {
+  tickrate: 100,
+  version: "0.1b",
+  frameTimeMultiplier: 0,
+}
+clientInfo.tickInterval = 1000 / clientInfo.tickrate;
+
 var movement = {
     directions: {
         up: false,
@@ -65,80 +80,6 @@ function Join() {
     setUpSockets();
 }
 
-oldPlayers = [];
-players = [];
-
-function drawBoard(bw, bh, p) {
-    ctx.lineWidth = 1;
-    for (var x = 40; x <= bw - 40; x += 40) {
-        ctx.moveTo(x + p, p);
-        ctx.lineTo(x + p, bh + p);
-    }
-    for (var x = 40; x <= bh - 40; x += 40) {
-        ctx.moveTo(p, x + p);
-        ctx.lineTo(bw + p, x + p);
-    }
-    ctx.strokeStyle = "#444";
-    ctx.stroke();
-}
-
-function lerp(start, end, time) {
-    return start * (1 - time) + end * time;
-}
-
-var frame = 0;
-function gameTick() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    var bw = 1205;
-    var bh = 605;
-    var p = -1;
-    frame++;
-    drawBoard(bw, bh, p);
-    for (var id in players) {
-        var player = players[id];
-        var px, py;
-        if ((oldPlayer = oldPlayers[id])) {
-            var frameTime = frame * 0.2; // 0.2 = (10 / serverTickRate in ms), server ticks every 50ms in this version so (10/50) = 20 so 0.2 (note: I made this up, 0.2 was a guess -Koupah)
-            px = lerp(oldPlayer.x, player.x, frameTime);
-            py = lerp(oldPlayer.y, player.y, frameTime);
-        } else {
-            console.log("Forcing position");
-            px = player.x;
-            py = player.y;
-        }
-
-        if (player.color === "rainbow") {
-            ctx.strokeStyle = pSBC(-0.4, getRainbow());
-            ctx.fillStyle = getRainbow();
-        } else {
-            ctx.strokeStyle = player.shadowColor;
-            ctx.fillStyle = player.color;
-        }
-
-        ctx.lineWidth = 12;
-        ctx.beginPath();
-        ctx.arc(px, py, 22, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.fill();
-        ctx.font = "18px Arial";
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#99aab5";
-        ctx.fillText(player.name, px, py + 45);
-        ctx.fillText("Ping: " + ping, 100, 25);
-        if (debug) {
-            ctx.textAlign = "left";
-            var p = players[socket.id];
-            ctx.fillText(
-                `${Math.floor(p.x)}, ${Math.floor(p.y)}  |
-${Math.floor(p.vx)}, ${Math.floor(p.vy)}`,
-                10,
-                582
-            );
-        }
-        ctx.closePath();
-    }
-}
-
 function setUpSockets() {
     clearInterval(movementInterval);
     clearInterval(movementPing);
@@ -157,7 +98,7 @@ function setUpSockets() {
         frame = 0;
     });
 
-    gameTick = setInterval(gameTick, 10);
+    gameTick = setInterval(gameTick, clientInfo.tickInterval);
 
     socket.on("pong", function (ms) {
         ping = ms;
@@ -193,6 +134,13 @@ function setUpSockets() {
         $("#canvas").show();
         $("#openChatBtn").show();
         openNav();
+    });
+
+    socket.on("server_info", function(data) {
+      serverInfo.tickrate = data["tickrate"];
+      serverInfo.tickInterval = 1000 / serverInfo.tickrate;
+      serverInfo.version = data["version"];
+      clientInfo.frameTimeMultiplier = clientInfo.tickInterval / serverInfo.tickInterval;
     });
 
     socket.on("message", function (message) {
@@ -286,6 +234,81 @@ document.addEventListener("keyup", function (event) {
 
     if (!movement.changed) movement.changed = movement.sum() != before;
 });
+
+oldPlayers = [];
+players = [];
+
+function drawBoard(bw, bh, p) {
+    ctx.lineWidth = 1;
+    for (var x = 40; x <= bw - 40; x += 40) {
+        ctx.moveTo(x + p, p);
+        ctx.lineTo(x + p, bh + p);
+    }
+    for (var x = 40; x <= bh - 40; x += 40) {
+        ctx.moveTo(p, x + p);
+        ctx.lineTo(bw + p, x + p);
+    }
+    ctx.strokeStyle = "#444";
+    ctx.stroke();
+}
+
+function lerp(start, end, time) {
+    return start * (1 - time) + end * time;
+}
+
+var frame = 0;
+function gameTick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var bw = 1205;
+    var bh = 605;
+    var p = -1;
+    
+    drawBoard(bw, bh, p);
+    for (var id in players) {
+        var player = players[id];
+        var px, py;
+        if ((oldPlayer = oldPlayers[id])) {
+            var frameTime = frame * clientInfo.frameTimeMultiplier; // (originally was 0.2) 0.2 = (gameTick in ms / serverTickRate in ms), server ticks every 50ms in this version and game ticks every 10ms so (10/50) = 20 so 0.2 
+            //note: I made this up originally, 0.2 was a guess and I worked backwards to figure out why it works so well -Koupah
+            px = lerp(oldPlayer.x, player.x, frameTime);
+            py = lerp(oldPlayer.y, player.y, frameTime);
+        } else {
+            px = player.x;
+            py = player.y;
+        }
+
+        if (player.color === "rainbow") {
+            ctx.fillStyle = getRainbow();
+            ctx.strokeStyle = pSBC(-0.4, ctx.fillStyle); // Rearranged so we don't have to call getRainbow() twice
+        } else {
+            ctx.strokeStyle = player.shadowColor;
+            ctx.fillStyle = player.color;
+        }
+
+        ctx.lineWidth = 12;
+        ctx.beginPath();
+        ctx.arc(px, py, 22, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+        ctx.font = "18px Arial";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#99aab5";
+        ctx.fillText(player.name, px, py + 45);
+        ctx.fillText("Ping: " + ping, 100, 25);
+        if (debug) {
+            ctx.textAlign = "left";
+            var p = players[socket.id];
+            ctx.fillText(
+                `${Math.floor(p.x)}, ${Math.floor(p.y)}  |
+${Math.floor(p.vx)}, ${Math.floor(p.vy)}`,
+                10,
+                582
+            );
+        }
+        ctx.closePath();
+    }
+    frame++;
+}
 
 window.onblur = function (event) {
     movement.directions.left = false;
