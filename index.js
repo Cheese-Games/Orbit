@@ -16,11 +16,21 @@ const DOMPurify = createDOMPurify(window);
 
 const port = process.env.PORT || 3000;
 
-const velMod = 1;
-const velDownRate = 0.87;
-
 // timer in minutes
 const inactivityTimer = 10;
+
+var serverInfo = {
+  version: "0.1.0",
+  tickrate: 20, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
+};
+// Can't do this inside ?? Whatever
+serverInfo.tickInterval = 1000 / serverInfo.tickrate;
+
+const tickMultiplier = serverInfo.tickInterval/15;
+
+const playerSpeed = 1 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
+const velDownRate = 0.87 ** tickMultiplier; // Do the same for velocity, needs to be ^tickMultipklier
+
 
 var sockets = io.sockets.sockets;
 //io.set("origins", "https://orbit-cg.herokuapp.com:*");
@@ -55,13 +65,6 @@ server.listen(port, function () {
 
 var players = {};
 var colliders = {};
-
-var serverInfo = {
-  version: "0.1.0",
-  tickrate: 20, // Not true tickrate, just the rate we send info to users
-}
-// Can't do this inside ?? Whatever
-serverInfo.tickInterval  = 1000 / serverInfo.tickrate;
 
 function kickPlayer(socket, message) {
     var socketId = socket.id;
@@ -227,24 +230,25 @@ var map = {
     },
 };
 
+
 setInterval(function () {
     for (var socketId in sockets) {
         var player = players[socketId];
         var playerCollider = colliders[socketId];
         if (player === undefined) continue;
 
-        if (player.movement.directions.left) player.vx -= velMod;
+        if (player.movement.directions.left) player.vx -= playerSpeed;
 
-        if (player.movement.directions.up) player.vy -= velMod;
+        if (player.movement.directions.up) player.vy -= playerSpeed;
 
-        if (player.movement.directions.right) player.vx += velMod;
+        if (player.movement.directions.right) player.vx += playerSpeed;
 
-        if (player.movement.directions.down) player.vy += velMod;
+        if (player.movement.directions.down) player.vy += playerSpeed;
 
-        player.x += player.vx;
-        player.y += player.vy;
+        player.x += player.vx * tickMultiplier;
+        player.y += player.vy * tickMultiplier;
         player.vx *= velDownRate;
-        player.vy *= velDownRate;
+        player.vy *= velDownRate
 
         if (player.x > 1170) {
             player.x = 1170;
@@ -278,18 +282,16 @@ setInterval(function () {
                             x: vCollision.x / distance,
                             y: vCollision.y / distance,
                         };
-                        players[collid].vx += 1 * vCollisionNorm.x;
-                        players[collid].vy += 1 * vCollisionNorm.y;
-                        player.vx -= 1 * vCollisionNorm.x;
-                        player.vy -= 1 * vCollisionNorm.y;
+                        players[collid].vx += 1 * vCollisionNorm.x * tickMultiplier;
+                        players[collid].vy += 1 * vCollisionNorm.y * tickMultiplier;
+                        player.vx -= 1 * vCollisionNorm.x  * tickMultiplier;
+                        player.vy -= 1 * vCollisionNorm.y * tickMultiplier;
                     }
                     break;
             }
         }
     }
-}, 15);
 
-setInterval(function () {
     io.sockets.emit("state", players);
 }, serverInfo.tickInterval);
 
