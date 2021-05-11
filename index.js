@@ -21,15 +21,15 @@ const inactivityTimer = 10;
 
 var serverInfo = {
     version: "0.1.0",
-    tickrate: 5, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
+    tickrate: 20, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
 };
 // Can't do this inside ?? Whatever
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
 
-const tickMultiplier = serverInfo.tickInterval / 15;
+const tickMultiplier = ((1000/15) / serverInfo.tickrate);
 
 const playerSpeed = 1 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
-const velDownRate = 0.87 ** tickMultiplier; // Do the same for velocity, needs to be ^tickMultipklier
+const velDownRate = 0.87; // I'm stupid, intially I scaled the velDownRate but in reality that is wrong
 const interpIterations = Math.ceil(tickMultiplier);
 
 var sockets = io.sockets.sockets;
@@ -252,8 +252,8 @@ setInterval(function () {
 
         if (player.movement.directions.down) player.vy += playerSpeed;
 
-        player.x += player.vx * tickMultiplier;
-        player.y += player.vy * tickMultiplier;
+        player.x += player.vx;
+        player.y += player.vy;
         player.vx *= velDownRate;
         player.vy *= velDownRate;
 
@@ -307,7 +307,10 @@ setInterval(function () {
             }
         }
     }
-
+    var toSend = [];
+    for (id in players) {
+      toSend.push({ name: id.name, x: id.x, y: id.y, color: id.color, shadowColor: id.shadowColor });
+    }
     io.sockets.emit("state", players);
 }, serverInfo.tickInterval);
 
