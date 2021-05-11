@@ -10,20 +10,22 @@ var noModal = false;
 var debug = false;
 var movementInterval;
 var movementPing;
+var playerInterpolation = true;
+var reusePositions = true;
 
 var intervals = [];
 
 var serverInfo = {
-  tickrate: 20,
-  version: "Unknown",
-}
+    tickrate: 20,
+    version: "Unknown",
+};
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
 
 var clientInfo = {
-  tickrate: 100,
-  version: "0.1b",
-  frameTimeMultiplier: 0,
-}
+    tickrate: 100,
+    version: "0.1b",
+    frameTimeMultiplier: 0,
+};
 clientInfo.tickInterval = 1000 / clientInfo.tickrate;
 
 var movement = {
@@ -93,9 +95,18 @@ function setUpSockets() {
     canvas.height = 600;
 
     socket.on("state", function (updatedPlayers) {
+      
+        // Reuse positions to prevent jitter for laggy connections, to test this: Manually set the clientInfo frameTimeMultiplier to something lower than it should be
+        if (playerInterpolation && reusePositions)
+            for (var id in oldPlayers) {
+                if (oldPlayers[id].cx && players[id]) {
+                    players[id].x = oldPlayers[id].cx;
+                    players[id].y = oldPlayers[id].cy;
+                }
+            }
+        frame = 0;
         oldPlayers = players;
         players = updatedPlayers;
-        frame = 0;
     });
 
     gameTick = setInterval(gameTick, clientInfo.tickInterval);
@@ -136,11 +147,11 @@ function setUpSockets() {
         openNav();
     });
 
-    socket.on("server_info", function(data) {
-      serverInfo.tickrate = data["tickrate"];
-      serverInfo.tickInterval = 1000 / serverInfo.tickrate;
-      serverInfo.version = data["version"];
-      clientInfo.frameTimeMultiplier = clientInfo.tickInterval / serverInfo.tickInterval;
+    socket.on("server_info", function (data) {
+        serverInfo.tickrate = data["tickrate"];
+        serverInfo.tickInterval = 1000 / serverInfo.tickrate;
+        serverInfo.version = data["version"];
+        clientInfo.frameTimeMultiplier = clientInfo.tickInterval / serverInfo.tickInterval;
     });
 
     socket.on("message", function (message) {
@@ -262,16 +273,18 @@ function gameTick() {
     var bw = 1205;
     var bh = 605;
     var p = -1;
-    
+
     drawBoard(bw, bh, p);
     for (var id in players) {
         var player = players[id];
         var px, py;
-        if ((oldPlayer = oldPlayers[id])) {
-            var frameTime = frame * clientInfo.frameTimeMultiplier; // (originally was 0.2) 0.2 = (gameTick in ms / serverTickRate in ms), server ticks every 50ms in this version and game ticks every 10ms so (10/50) = 20 so 0.2 
+        if (playerInterpolation && (oldPlayer = oldPlayers[id])) {
+            var frameTime = frame * clientInfo.frameTimeMultiplier; // (originally was 0.2) 0.2 = (gameTick in ms / serverTickRate in ms), server ticks every 50ms in this version and game ticks every 10ms so (10/50) = 20 so 0.2
             //note: I made this up originally, 0.2 was a guess and I worked backwards to figure out why it works so well -Koupah
             px = lerp(oldPlayer.x, player.x, frameTime);
             py = lerp(oldPlayer.y, player.y, frameTime);
+            oldPlayer.cx = px;
+            oldPlayer.cy = py;
         } else {
             px = player.x;
             py = player.y;
