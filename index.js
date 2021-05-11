@@ -21,14 +21,14 @@ const inactivityTimer = 10;
 
 var serverInfo = {
     version: "0.1.0",
-    tickrate: 20, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
+    tickrate: 6, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
 };
 // Can't do this inside ?? Whatever
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
 
-const tickMultiplier = ((1000/15) /* 15ms was the games original interval */ / serverInfo.tickrate);
+const tickMultiplier = 1000 / 15 /* 15ms was the games original interval */ / serverInfo.tickrate;
 
-const playerSpeed = 1 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
+const playerSpeed = 3 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
 const velDownRate = 0.87; // I'm stupid, intially I scaled the velDownRate but in reality that is wrong
 const interpIterations = Math.ceil(tickMultiplier);
 
@@ -237,7 +237,7 @@ function lerp(start, end, time) {
 setInterval(function () {
     for (var socketId in sockets) {
         var player = players[socketId];
-        var playerCollider = colliders[socketId];
+        
         if (player === undefined) continue;
 
         // Previous x & y, for interpolation for calculating impact
@@ -267,17 +267,21 @@ setInterval(function () {
         } else if (player.y < 30) {
             player.y = 30;
         }
-
-        playerCollider.x = player.x;
-        playerCollider.y = player.y;
+    }
+    var toSend = {};
+    for (id in players) {
+        
+        // Do collisions after all players have had their new location calculated
+        var player = players[id];
+        var playerCollider = colliders[id];
 
         for (var collid in colliders) {
-            if (collid === socketId) continue;
+            if (collid === id) continue;
             var collider = colliders[collid];
 
-            interpolation: for (var iteration = 1; iteration <= interpIterations; iteration++) {
-                playerCollider.x = lerp(player.px, player.x, iteration / interpIterations);
-                playerCollider.y = lerp(player.py, player.y, iteration / interpIterations);
+            interpolation: for (var iteration = 0; iteration < interpIterations+1; iteration++) {
+                playerCollider.x = lerp(player.px, player.x, iteration / (interpIterations));
+                playerCollider.y = lerp(player.py, player.y, iteration / (interpIterations));
 
                 switch (collider.type) {
                     case "circle":
@@ -288,13 +292,17 @@ setInterval(function () {
                             };
                             var distance = Math.sqrt((collider.x - playerCollider.x) * (collider.x - playerCollider.x) + (collider.y - playerCollider.y) * (collider.y - playerCollider.y));
                             var vCollisionNorm = {
-                                x: vCollision.x / distance,
-                                y: vCollision.y / distance,
+                                x: (playerSpeed) * ((vCollision.x / distance)),
+                                y: (playerSpeed) * ((vCollision.y / distance)),
                             };
-                            players[collid].vx += vCollisionNorm.x * tickMultiplier;
-                            players[collid].vy += vCollisionNorm.y * tickMultiplier;
-                            player.vx -= vCollisionNorm.x * tickMultiplier;
-                            player.vy -= vCollisionNorm.y * tickMultiplier;
+                            var collided = players[collid];
+                            collided.vx = vCollisionNorm.x;
+                            collided.vy = vCollisionNorm.y;
+                            collided.x = collided.x + collided.vx;
+                            collided.y = collided.y + collided.vy;
+
+                            player.vx = (-vCollisionNorm.x);
+                            player.vy = (-vCollisionNorm.y);
 
                             // Set player location here, basically set their position to where they were when they collided
                             player.x = playerCollider.x;
@@ -306,11 +314,9 @@ setInterval(function () {
                 }
             }
         }
-    }
-    var toSend = {};
-    for (id in players) {
-      var player = players[id];
-      toSend[id] = { name: player.name, x: player.x, y: player.y, color: player.color, shadowColor: player.shadowColor };
+
+
+        toSend[id] = { name: player.name, x: player.x, y: player.y, color: player.color, shadowColor: player.shadowColor };
     }
     io.sockets.emit("state", toSend);
 }, serverInfo.tickInterval);
