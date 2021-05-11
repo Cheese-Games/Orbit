@@ -26,7 +26,7 @@ var serverInfo = {
 // Can't do this inside ?? Whatever
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
 
-const tickMultiplier = ((1000/15) / serverInfo.tickrate);
+const tickMultiplier = ((1000/15) /* 15ms was the games original interval */ / serverInfo.tickrate);
 
 const playerSpeed = 1 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
 const velDownRate = 0.87; // I'm stupid, intially I scaled the velDownRate but in reality that is wrong
@@ -307,11 +307,12 @@ setInterval(function () {
             }
         }
     }
-    var toSend = [];
+    var toSend = {};
     for (id in players) {
-      toSend.push({ name: id.name, x: id.x, y: id.y, color: id.color, shadowColor: id.shadowColor });
+      var player = players[id];
+      toSend[id] = { name: player.name, x: player.x, y: player.y, color: player.color, shadowColor: player.shadowColor };
     }
-    io.sockets.emit("state", players);
+    io.sockets.emit("state", toSend);
 }, serverInfo.tickInterval);
 
 setInterval(function () {

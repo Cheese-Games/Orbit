@@ -67,9 +67,7 @@ function onEmojiClick() {
     $("#emoji-picker").toggle();
 }
 
-document
-    .querySelector("emoji-picker")
-    .addEventListener("emoji-click", (event) => $("#ComposedMessage").val($("#ComposedMessage").val() + event.detail["unicode"]));
+document.querySelector("emoji-picker").addEventListener("emoji-click", (event) => $("#ComposedMessage").val($("#ComposedMessage").val() + event.detail["unicode"]));
 
 function Join() {
     if (socket !== undefined && socket.connected) {
@@ -95,7 +93,6 @@ function setUpSockets() {
     canvas.height = 600;
 
     socket.on("state", function (updatedPlayers) {
-      
         // Reuse positions to prevent jitter for laggy connections, to test this: Manually set the clientInfo frameTimeMultiplier to something lower than it should be
         if (playerInterpolation && reusePositions)
             for (var id in oldPlayers) {
@@ -104,7 +101,7 @@ function setUpSockets() {
                     players[id].y = oldPlayers[id].cy;
                 }
             }
-        frame = 0;
+        frame = 1;
         oldPlayers = players;
         players = updatedPlayers;
     });
@@ -267,7 +264,7 @@ function lerp(start, end, time) {
     return start * (1 - time) + end * time;
 }
 
-var frame = 0;
+var frame = 1;
 function gameTick() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     var bw = 1205;
@@ -420,9 +417,7 @@ const pSBC = (r, t, e, l) => {
                       if (8 == t || 6 == t || t < 4) return null;
                       t < 6 && (r = "#" + r[1] + r[1] + r[2] + r[2] + r[3] + r[3] + (t > 4 ? r[4] + r[4] : "")),
                           (r = u(r.slice(1), 16)),
-                          9 == t || 5 == t
-                              ? ((e.r = (r >> 24) & 255), (e.g = (r >> 16) & 255), (e.b = (r >> 8) & 255), (e.a = h((255 & r) / 0.255) / 1e3))
-                              : ((e.r = r >> 16), (e.g = (r >> 8) & 255), (e.b = 255 & r), (e.a = -1));
+                          9 == t || 5 == t ? ((e.r = (r >> 24) & 255), (e.g = (r >> 16) & 255), (e.b = (r >> 8) & 255), (e.a = h((255 & r) / 0.255) / 1e3)) : ((e.r = r >> 16), (e.g = (r >> 8) & 255), (e.b = 255 & r), (e.a = -1));
                   }
                   return e;
               }),
@@ -448,16 +443,10 @@ const pSBC = (r, t, e, l) => {
                     }),
           (a = 1 - (r = a ? -1 * r : r)),
           s && b
-              ? (l
-                    ? ((n = h(a * s.r + r * b.r)), (g = h(a * s.g + r * b.g)), (i = h(a * s.b + r * b.b)))
-                    : ((n = h((a * s.r ** 2 + r * b.r ** 2) ** 0.5)),
-                      (g = h((a * s.g ** 2 + r * b.g ** 2) ** 0.5)),
-                      (i = h((a * s.b ** 2 + r * b.b ** 2) ** 0.5))),
+              ? (l ? ((n = h(a * s.r + r * b.r)), (g = h(a * s.g + r * b.g)), (i = h(a * s.b + r * b.b))) : ((n = h((a * s.r ** 2 + r * b.r ** 2) ** 0.5)), (g = h((a * s.g ** 2 + r * b.g ** 2) ** 0.5)), (i = h((a * s.b ** 2 + r * b.b ** 2) ** 0.5))),
                 (o = s.a),
                 (b = b.a),
                 (o = (s = o >= 0 || b >= 0) ? (o < 0 ? b : b < 0 ? o : o * a + b * r) : 0),
-                p
-                    ? "rgb" + (s ? "a(" : "(") + n + "," + g + "," + i + (s ? "," + h(1e3 * o) / 1e3 : "") + ")"
-                    : "#" + (4294967296 + 16777216 * n + 65536 * g + 256 * i + (s ? h(255 * o) : 0)).toString(16).slice(1, s ? void 0 : -2))
+                p ? "rgb" + (s ? "a(" : "(") + n + "," + g + "," + i + (s ? "," + h(1e3 * o) / 1e3 : "") + ")" : "#" + (4294967296 + 16777216 * n + 65536 * g + 256 * i + (s ? h(255 * o) : 0)).toString(16).slice(1, s ? void 0 : -2))
               : null);
 };
