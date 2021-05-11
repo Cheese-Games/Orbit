@@ -99,7 +99,7 @@ function setUpSockets() {
         ctx.strokeStyle = pSBC(-0.4, getRainbow());
         ctx.fillStyle = getRainbow();
       } else {
-        ctx.strokeStyle = player.shadowColor;
+        ctx.strokeStyle = pSBC(-0.4, player.color);
         ctx.fillStyle = player.color;
       }
 
