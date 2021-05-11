@@ -20,17 +20,17 @@ const port = process.env.PORT || 3000;
 const inactivityTimer = 10;
 
 var serverInfo = {
-  version: "0.1.0",
-  tickrate: 20, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
+    version: "0.1.0",
+    tickrate: 5, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
 };
 // Can't do this inside ?? Whatever
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
 
-const tickMultiplier = serverInfo.tickInterval/15;
+const tickMultiplier = serverInfo.tickInterval / 15;
 
 const playerSpeed = 1 * tickMultiplier; // Scale playerSpeed with tickMultiplier for consistent speeds no matter tickrate
 const velDownRate = 0.87 ** tickMultiplier; // Do the same for velocity, needs to be ^tickMultipklier
-
+const interpIterations = Math.ceil(tickMultiplier);
 
 var sockets = io.sockets.sockets;
 //io.set("origins", "https://orbit-cg.herokuapp.com:*");
@@ -230,12 +230,19 @@ var map = {
     },
 };
 
+function lerp(start, end, time) {
+    return start * (1 - time) + end * time;
+}
 
 setInterval(function () {
     for (var socketId in sockets) {
         var player = players[socketId];
         var playerCollider = colliders[socketId];
         if (player === undefined) continue;
+
+        // Previous x & y, for interpolation for calculating impact
+        player.px = player.x;
+        player.py = player.y;
 
         if (player.movement.directions.left) player.vx -= playerSpeed;
 
@@ -248,7 +255,7 @@ setInterval(function () {
         player.x += player.vx * tickMultiplier;
         player.y += player.vy * tickMultiplier;
         player.vx *= velDownRate;
-        player.vy *= velDownRate
+        player.vy *= velDownRate;
 
         if (player.x > 1170) {
             player.x = 1170;
@@ -267,27 +274,36 @@ setInterval(function () {
         for (var collid in colliders) {
             if (collid === socketId) continue;
             var collider = colliders[collid];
-            switch (collider.type) {
-                case "circle":
-                    if (CirclesColliding(playerCollider, collider)) {
-                        var vCollision = {
-                            x: collider.x - playerCollider.x,
-                            y: collider.y - playerCollider.y,
-                        };
-                        var distance = Math.sqrt(
-                            (collider.x - playerCollider.x) * (collider.x - playerCollider.x) +
-                                (collider.y - playerCollider.y) * (collider.y - playerCollider.y)
-                        );
-                        var vCollisionNorm = {
-                            x: vCollision.x / distance,
-                            y: vCollision.y / distance,
-                        };
-                        players[collid].vx += 1 * vCollisionNorm.x * tickMultiplier;
-                        players[collid].vy += 1 * vCollisionNorm.y * tickMultiplier;
-                        player.vx -= 1 * vCollisionNorm.x  * tickMultiplier;
-                        player.vy -= 1 * vCollisionNorm.y * tickMultiplier;
-                    }
-                    break;
+
+            interpolation: for (var iteration = 1; iteration <= interpIterations; iteration++) {
+                playerCollider.x = lerp(player.px, player.x, iteration / interpIterations);
+                playerCollider.y = lerp(player.py, player.y, iteration / interpIterations);
+
+                switch (collider.type) {
+                    case "circle":
+                        if (CirclesColliding(playerCollider, collider)) {
+                            var vCollision = {
+                                x: collider.x - playerCollider.x,
+                                y: collider.y - playerCollider.y,
+                            };
+                            var distance = Math.sqrt((collider.x - playerCollider.x) * (collider.x - playerCollider.x) + (collider.y - playerCollider.y) * (collider.y - playerCollider.y));
+                            var vCollisionNorm = {
+                                x: vCollision.x / distance,
+                                y: vCollision.y / distance,
+                            };
+                            players[collid].vx += vCollisionNorm.x * tickMultiplier;
+                            players[collid].vy += vCollisionNorm.y * tickMultiplier;
+                            player.vx -= vCollisionNorm.x * tickMultiplier;
+                            player.vy -= vCollisionNorm.y * tickMultiplier;
+
+                            // Set player location here, basically set their position to where they were when they collided
+                            player.x = playerCollider.x;
+                            player.y = playerCollider.y;
+
+                            break interpolation; // We don't need to continue through all points if we collided
+                        }
+                        break;
+                }
             }
         }
     }
