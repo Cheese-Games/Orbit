@@ -56,6 +56,13 @@ server.listen(port, function () {
 var players = {};
 var colliders = {};
 
+var serverInfo = {
+  version: "0.1.0",
+  tickrate: 20, // Not true tickrate, just the rate we send info to users
+}
+// Can't do this inside ?? Whatever
+serverInfo.tickInterval  = 1000 / serverInfo.tickrate;
+
 function kickPlayer(socket, message) {
     var socketId = socket.id;
     socket.emit("modal", message, true);
@@ -89,6 +96,8 @@ io.on("connection", function (socket) {
             }
             break;
         }
+
+        socket.emit("server_info", serverInfo);
 
         if ((existingPlayer = players[socket.id]) !== undefined) {
             existingPlayer.rateLimit.nameChanges++;
@@ -282,7 +291,7 @@ setInterval(function () {
 
 setInterval(function () {
     io.sockets.emit("state", players);
-}, 50);
+}, serverInfo.tickInterval);
 
 setInterval(function () {
     for (var p in players) {
