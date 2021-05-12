@@ -36,12 +36,6 @@ var sockets = io.sockets.sockets;
 io.set("origins", "https://orbit-cg.herokuapp.com:*");
 
 app.set("port", port);
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    next();
-});
 app.use("/static", express.static(__dirname + "/static"));
 app.get("/", function (request, response) {
     response.sendFile(path.join(__dirname, "/index.html"));
@@ -52,7 +46,7 @@ String.prototype.isEmpty = function () {
 };
 
 String.prototype.sanitize = function () {
-    return DOMPurify.sanitize(this, { ALLOWED_TAGS: ["b", "i"] });
+    return DOMPurify.sanitize(this, { ALLOWED_TAGS: ["b", "i"], ALLOWED_ATTR: ['lmao'] });
 };
 
 String.prototype.purify = function () {
