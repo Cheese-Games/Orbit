@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
     "dompurify": "^2.2.8",
     "express": "^4.17.1",
     "html": "^1.0.0",
     "jsdom": "^16.5.3",
+    "matter-js": "^0.17.1",
     "profanity-util": "^0.2.0",
     "request": "^2.88.2",
     "server": "^1.0.27",

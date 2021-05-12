@@ -2,6 +2,6 @@
   "name": "Orbit",
   "description": "a fun circle game",
   "repository": "https://github.com/XtraCube/Orbit",
-  "logo": "https://a-game-by-xtracube.herokuapp.com/static/logo.png",
+  "logo": "https://github.com/XtraCube/Orbit/raw/master/static/img/logo.png",
   "keywords": ["node", "express", "static", "game", "xtracube", "orbit"]
 }
