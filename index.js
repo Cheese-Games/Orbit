@@ -253,17 +253,13 @@ setInterval(function () {
 
         if (player.x > 1170) {
             player.x = 1170;
-            player.vx = 0;
         } else if (player.x < 30) {
             player.x = 30;
-            player.vx = 0;
         }
         if (player.y > 570) {
             player.y = 570;
-            player.vy = 0;
         } else if (player.y < 30) {
             player.y = 30;
-            player.vy = 0;
         }
     }
     var toSend = {};
