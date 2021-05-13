@@ -266,58 +266,58 @@ function lerp(start, end, time) {
 }
 
 var frame = 1;
-
 function gameTick() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  var bw = 1205;
-  var bh = 605;
-  var p = -1;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var bw = 1205;
+    var bh = 605;
+    var p = -1;
 
-  drawBoard(bw, bh, p);
-  for (var id in players) {
-    var player = players[id];
-    var px, py;
-    if (playerInterpolation && (oldPlayer = oldPlayers[id])) {
-      var frameTime = frame * clientInfo.frameTimeMultiplier; // (originally was 0.2) 0.2 = (gameTick in ms / servertickRate in ms), server ticks every 50ms in this version and game ticks every 10ms so (10/50) = 20 so 0.2
-      //note: I made this up originally, 0.2 was a guess and I worked backwards to figure out why it works so well -Koupah
-      px = lerp(oldPlayer.x, player.x, frameTime);
-      py = lerp(oldPlayer.y, player.y, frameTime);
-      oldPlayer.cx = px;
-      oldPlayer.cy = py;
-    } else {
-      px = player.x;
-      py = player.y;
-    }
+    drawBoard(bw, bh, p);
+    for (var id in players) {
+        var player = players[id];
+        var px, py;
+        if (playerInterpolation && (oldPlayer = oldPlayers[id])) {
+            var frameTime = frame * clientInfo.frameTimeMultiplier; // (originally was 0.2) 0.2 = (gameTick in ms / serverTickRate in ms), server ticks every 50ms in this version and game ticks every 10ms so (10/50) = 20 so 0.2
+            //note: I made this up originally, 0.2 was a guess and I worked backwards to figure out why it works so well -Koupah
+            px = lerp(oldPlayer.x, player.x, frameTime);
+            py = lerp(oldPlayer.y, player.y, frameTime);
+            oldPlayer.cx = px;
+            oldPlayer.cy = py;
+        } else {
+            px = player.x;
+            py = player.y;
+        }
 
-    if (player.color === "rainbow") {
-      ctx.fillStyle = getRainbow();
-      ctx.strokeStyle = pSBC(-0.4, ctx.fillStyle);
-    } else {
-      ctx.fillStyle = player.color;
-      ctx.strokeStyle = pSBC(-0.4, ctx.fillStyle);
-    }
+        if (player.color === "rainbow") {
+            ctx.fillStyle = getRainbow();
+            ctx.strokeStyle = pSBC(-0.4, ctx.fillStyle); // Rearranged so we don't have to call getRainbow() twice
+        } else {
+            ctx.strokeStyle = player.shadowColor;
+            ctx.fillStyle = player.color;
+        }
 
-    ctx.lineWidth = 12;
-    ctx.beginPath();
-    ctx.arc(px, py, 22, 0, 2 * Math.PI);
-    ctx.stroke();
-    ctx.fill();
-    ctx.font = "18px Arial";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#99aab5";
-    ctx.fillText(player.name, px, py + 45);
-    ctx.fillText("Ping: " + ping, 100, 25);
-    if (debug) {
-      ctx.textAlign = "left";
-      var p = players[socket.id];
-      ctx.fillText(
-        `${Math.floor(p.x)}, ${Math.floor(p.y)}`,
-        10,
-        582
-      );
+        ctx.lineWidth = 12;
+        ctx.beginPath();
+        ctx.arc(px, py, 22, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
+        ctx.font = "18px Arial";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "#99aab5";
+        ctx.fillText(player.name, px, py + 45);
+        ctx.fillText("Ping: " + ping, 100, 25);
+        if (debug) {
+            ctx.textAlign = "left";
+            var p = players[socket.id];
+            ctx.fillText(
+                `${Math.floor(p.x)}, ${Math.floor(p.y)}`,
+                10,
+                582
+            );
+        }
+        ctx.closePath();
     }
-  }
-  frame++;
+    frame++;
 }
 
 window.onblur = function(event) {
