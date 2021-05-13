@@ -292,8 +292,8 @@ function gameTick() {
             ctx.fillStyle = getRainbow();
             ctx.strokeStyle = pSBC(-0.4, ctx.fillStyle); // Rearranged so we don't have to call getRainbow() twice
         } else {
-            ctx.strokeStyle = player.shadowColor;
             ctx.fillStyle = player.color;
+            ctx.strokeStyle = pSBC(-0.4, ctx.fillStyle); 
         }
 
         ctx.lineWidth = 12;
