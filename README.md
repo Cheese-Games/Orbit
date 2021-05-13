@@ -2,7 +2,7 @@
 
 [![Discord](https://img.shields.io/badge/Discord-chat-blue?style=flat-square)](https://discord.gg/u77VFsWUWv)
 
-i made this game for school and for fun
+xtracube made this game for school and for fun and for learning
 
 # Instructions to run your own custom game server
 
