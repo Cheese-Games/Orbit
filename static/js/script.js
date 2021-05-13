@@ -280,10 +280,6 @@ function gameTick() {
             //note: I made this up originally, 0.2 was a guess and I worked backwards to figure out why it works so well -Koupah
             px = lerp(oldPlayer.x, player.x, frameTime);
             py = lerp(oldPlayer.y, player.y, frameTime);
-            if (px < 0) px = 0;
-            if (px < bw - 35) px = bw - 35;
-            if (py < 0) py = 0;
-            if (py > bh - 35) py = bh - 35;
             oldPlayer.cx = px;
             oldPlayer.cy = py;
         } else {
