@@ -10,5 +10,6 @@
   "author": "Cheese Games",
   "license": "GPL-3.0+",
   "dependencies": {
+    "koa": "^2.13.4"
   }
 }
