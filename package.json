@@ -1,14 +1,23 @@
 {
   "name": "Orbit",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "a fun circle game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "keywords": [],
-  "author": "Cheese Games",
-  "license": "GPL-3.0+",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dompurify": "^2.2.8",
+    "express": "^4.17.1",
+    "html": "^1.0.0",
+    "jsdom": "^16.5.3",
+    "profanity-util": "^0.2.0",
+    "request": "^2.88.2",
+    "server": "^1.0.27",
+    "socket.io": "^2.3.0"
   }
 }

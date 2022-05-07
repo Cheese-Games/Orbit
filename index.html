@@ -1,1 +1,74 @@
 <!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Orbit</title>
+  <meta content="Orbit" property="og:title">
+  <meta content="a fun circle game" property="og:description">
+  <meta content="https://a-game.xtracube.repl.co" property="og:url">
+  <meta content="/static/img/logo.png" property="og:image">
+  <meta content="#ac2948" data-react-helmet="true" name="theme-color">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css" />
+  <link rel='stylesheet' href='/static/css/spectrum.css' />
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="shortcut icon" type="image/png" href="/static/img/logo.png" />
+  <link rel="icon" type="image/png" href="/static/img/logo.png" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src='/static/js/spectrum.js'></script>
+</head>
+
+<body>
+  <div id="inactivityModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <p id="modalText">You have been kicked for inactivity</p>
+    </div>
+
+  </div>
+  <div id="Main">
+    <img src="/static/img/banner.png" height="100vh" style="margin-top:1em;">
+    <h2 id="news"></h2>
+    <div id="ControlPanel">
+      <label for="NameInput">Username</label>
+      <input id="NameInput" placeholder="Username" type="text">
+      <label for="ServerInput">Server</label>
+      <input id="ServerInput" placeholder="Leave blank for default" type="text">
+      <input id="ConnectButton" class="btn" type="submit" value="Join" onclick="Join()">
+      <input id='ColorPicker' /><br>
+      <p id="status"></p>
+    </div>
+    <div id="GameArea">
+      <canvas id="canvas"></canvas>
+    </div>
+    <button id="openChatBtn" class="openbtn" onclick="ToggleChat()">&#9776; Open Chat</button>
+    <br><br>
+  </div>
+
+  <div class="version">
+    <h3>V0.1.1</h3>
+  </div>
+  <div class="discord">
+    <a href="https://discord.gg/u77VFsWUWv">
+      <img width="40%" height="40%" src="/static/img/discord.png"></a>
+  </div>
+  <div id="chatBar" class="sidebar">
+    <div id="Chat">
+      <p id="Message0" class="Message"></p>
+    </div>
+    <div class="ChatControls">
+      <emoji-picker id="emoji-picker" style="position:absolute;bottom:7vh;display:none;"></emoji-picker>
+      <input id="ComposedMessage" type="text2" placeholder="Type your message here">
+      <input id="SendMessage" onclick="Send()" value="Send" class="Button" type="submit">
+      <button onclick="onEmojiClick()" style="width:min-content;font-size:3.5vh;position:absolute;bottom:0;left:0vw;top:92.5vh;right:0;background-color:Transparent;background-repeat:no-repeat;border:none;cursor:pointer;overflow: hidden;outline:none;">😃</button>
+    </div>
+  </div>
+  <script src="/static/js/script.js"></script>
+
+</body>
+
+</html>
