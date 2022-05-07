@@ -1,4 +1,4 @@
-const defaultServer = "https://a-game-by-xtracube.herokuapp.com/";
+const defaultServer = "";
 var socket;
 var canvas = $("#canvas")[0];
 var ctx = canvas.getContext("2d");

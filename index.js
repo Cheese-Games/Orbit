@@ -8,9 +8,7 @@ const { JSDOM } = require("jsdom");
 const { purify } = require("profanity-util");
 const app = express();
 const server = http.Server(app);
-const io = socketIO(server, {
-    pingInterval: 500,
-});
+const io = socketIO(server, { pingInterval: 500, });
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
@@ -19,9 +17,12 @@ const port = process.env.PORT || 3000;
 // timer in minutes
 const inactivityTimer = 10;
 
+const maxPlayers = 25
+
 var serverInfo = {
-    version: "0.1.0",
+    version: "0.1.1",
     tickrate: 20, // True tickrate, maths is calculated same time now!~~Not true tickrate, just the rate we send info to users~~
+
 };
 // Can't do this inside ?? Whatever
 serverInfo.tickInterval = 1000 / serverInfo.tickrate;
@@ -33,7 +34,7 @@ const velDownRate = 0.87; // I'm stupid, intially I scaled the velDownRate but i
 const interpIterations = Math.ceil(tickMultiplier);
 
 var sockets = io.sockets.sockets;
-io.set("origins", "https://orbit-cg.herokuapp.com:*");
+io.set("origins", ["https://orbit-cg.herokuapp.com:*","localhost:*"]);
 
 app.set("port", port);
 app.use("/static", express.static(__dirname + "/static"));
@@ -74,7 +75,12 @@ function randomInt(min = 0, max = 10000) {
 }
 
 io.on("connection", function (socket) {
+    if (io.engine.clientsCount > maxPlayers) {
+        kickPlayer(socket,"Server is full! Join again later or use a different server")
+    }
+
     socket.on("join", function (name = "Player") {
+
         name = name.toString().sanitize().slice(0, 16).purify();
 
         if (name.isEmpty() || name.toString().isEmpty()) name = "Player";
@@ -231,7 +237,7 @@ function lerp(start, end, time) {
 setInterval(function () {
     for (var socketId in sockets) {
         var player = players[socketId];
-        
+
         if (player === undefined) continue;
 
         // Previous x & y, for interpolation for calculating impact
@@ -264,7 +270,7 @@ setInterval(function () {
     }
     var toSend = {};
     for (id in players) {
-        
+
         // Do collisions after all players have had their new location calculated
         var player = players[id];
         var playerCollider = colliders[id];
