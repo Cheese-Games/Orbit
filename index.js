@@ -34,7 +34,7 @@ const velDownRate = 0.87; // I'm stupid, intially I scaled the velDownRate but i
 const interpIterations = Math.ceil(tickMultiplier);
 
 var sockets = io.sockets.sockets;
-io.set("origins", ["https://orbit-cg.herokuapp.com:*","localhost:*"]);
+io.set("origins", "https://orbit-cg.herokuapp.com:*");
 
 app.set("port", port);
 app.use("/static", express.static(__dirname + "/static"));
